@@ -1,6 +1,8 @@
 ﻿using LetsEncrypt.Azure.Core.V2.Models;
 using Microsoft.Azure.Management.Dns.Fluent;
 using Microsoft.Azure.Management.Dns.Fluent.Models;
+using Microsoft.Azure.Management.ResourceManager.Fluent;
+using Microsoft.Azure.Management.ResourceManager.Fluent.Core;
 using Microsoft.Rest.Azure;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,8 +18,12 @@ namespace LetsEncrypt.Azure.Core.V2.DnsProviders
         public AzureDnsProvider(AzureDnsSettings settings)
         {
             var credentials = AzureHelper.GetAzureCredentials(settings.AzureServicePrincipal, settings.AzureSubscription);
-         
-            this.client = new DnsManagementClient(credentials);
+            var restClient = RestClient.Configure()
+                .WithEnvironment(AzureEnvironment.AzureGlobalCloud)
+                .WithLogLevel(HttpLoggingDelegatingHandler.Level.Basic)
+                .WithCredentials(credentials)
+                .Build();
+            this.client = new DnsManagementClient(restClient);
             this.client.SubscriptionId = settings.AzureSubscription.SubscriptionId;
             this.settings = settings;
         }

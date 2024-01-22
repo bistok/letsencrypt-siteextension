@@ -34,7 +34,7 @@ namespace LetsEncrypt.Azure.Core.V2
                 logger.LogInformation("Validating dns challenge exists on name server {NameServer}", ns.ToString());
                 do
                 {
-                    var dnsRes = dnsClient.QueryServer(new[] { ns.Endpoint.Address }, $"_acme-challenge.{hostname}", QueryType.TXT);
+                    var dnsRes = dnsClient.QueryServer([ns], $"_acme-challenge.{hostname}", QueryType.TXT);
                     var queriedDns = dnsRes.Answers.TxtRecords();
                    
                     if (!queriedDns.Any(_ => _.Text.Any(t => t == dnsTxt)))
@@ -73,7 +73,7 @@ namespace LetsEncrypt.Azure.Core.V2
         public static string GetNoneWildcardDomain(string hostname)
         {
             var parts = DnsString.Parse(hostname);
-            return $"{parts.Labels[2]}{parts.Labels[1]}";
+            return parts.Value.Replace("*.", "");
         }
     }
 }

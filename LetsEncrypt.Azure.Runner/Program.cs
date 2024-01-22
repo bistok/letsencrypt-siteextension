@@ -22,11 +22,11 @@ namespace LetsEncrypt.Azure.Runner
                   .AddUserSecrets<Program>()
                   .Build();
 
-            var azureAppSettings = new AzureWebAppSettings[] { };
+            AzureWebAppSettings[] azureAppSettings = [];
 
             if (Configuration.GetSection("AzureAppService").Exists())
             {
-                azureAppSettings = new[] { Configuration.GetSection("AzureAppService").Get<AzureWebAppSettings>() };
+                azureAppSettings = [Configuration.GetSection("AzureAppService").Get<AzureWebAppSettings>()];
             }
             if (Configuration.GetSection("AzureAppServices").Exists())
             {
